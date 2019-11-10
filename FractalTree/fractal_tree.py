@@ -31,7 +31,7 @@ class LineSegment:
         """
         Calculates the length of the LineSegment
         """
-        return math.sqrt((self.end.x - self.start.x) ** 2 - (self.end.y - self.start.y) ** 2)
+        return math.sqrt((self.end.x - self.start.x) ** 2 + (self.end.y - self.start.y) ** 2)
 
 
 class FractalTree:
@@ -64,6 +64,40 @@ class FractalTree:
         """
         self._build_tree(self.start_pos, self.trunk_length, self.start_angle)
 
+    def get_max_vals(self) -> Tuple[float, float]:
+        """
+        Finds the max x and y values in the given tree and returns them.
+        """
+        x_vals = [(line.start.x, line.end.x) for line in self.tree]
+        x_vals = [item for sublist in x_vals for item in sublist]
+        y_vals = [(line.start.y, line.end.y) for line in self.tree]
+        y_vals = [item for sublist in y_vals for item in sublist]
+
+        return math.ceil(max(x_vals)), math.ceil(max(y_vals))
+
+    def normalize(self):
+        """
+        Normalizes the tree by making all coordinates positive.
+        """
+        # Find the minimum x and y values
+        x_vals = [(line.start.x, line.end.x) for line in self.tree]
+        x_vals = [item for sublist in x_vals for item in sublist]
+        y_vals = [(line.start.y, line.end.y) for line in self.tree]
+        y_vals = [item for sublist in y_vals for item in sublist]
+        x_shift = abs(min(x_vals))
+        y_shift = abs(min(y_vals))
+
+        # Add the shift values to each point
+        new_tree = []
+        for line in self.tree:
+            new_segment = LineSegment(
+                Point(line.start.x + x_shift, line.start.y + y_shift),
+                Point(line.end.x + x_shift, line.end.y + y_shift)
+            )
+            new_tree.append(new_segment)
+
+        self.tree = new_tree
+
     def _build_tree(self, start: Point, branch_len: float, branch_angle: float):
         """
         Recursively build the tree, exiting when the branch length is 3 or less.
@@ -86,9 +120,10 @@ class FractalTree:
         with branch length and angle.
         Returns a LineSegment
         """
-        end_point = Point()
-        end_point.x = start.x + (branch_length * math.cos(math.radians(branch_angle)))
-        end_point.y = start.y + (branch_length * math.sin(math.radians(branch_angle)))
+        end_point = Point(
+            start.x + (branch_length * math.cos(math.radians(branch_angle))),
+            start.y + (branch_length * math.sin(math.radians(branch_angle)))
+        )
         return LineSegment(start, end_point)
 
 
