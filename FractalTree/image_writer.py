@@ -101,3 +101,4 @@ class PNGWriter:
         self.im = Image.new("RGB", size=self.tree.get_max_vals(), color="white")
         self.generate_image()
         self.im.save(self.filename, format="PNG", optimize=True)
+        self.im.close()

@@ -142,6 +142,7 @@ class EntryWriter:
 
 
 if __name__ == "__main__":
-    entry = EntryWriter()
-    entry.build_tree()
-    entry.write_image("PNG")
+    for _ in range(25):
+        entry = EntryWriter("examples/")
+        entry.build_tree()
+        entry.write_image("PNG")
