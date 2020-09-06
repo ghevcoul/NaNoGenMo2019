@@ -66,8 +66,6 @@ class EntryWriter:
         else:
             self.bark_colour = random.choice(colours.GRAYS)
             self.bark_colour_name = random.choice(["Silver", "Gray", "Grey"])
-        
-        print(f"Selected {self.bark_colour_name} bark with colour {self.bark_colour}")
     
 
     def _select_foliage_colour(self) -> None:
@@ -86,8 +84,6 @@ class EntryWriter:
         else:
             self.foliage_colour = random.choice(colours.FLOWERING)
             self.foliage_colour_name = "Flowering"
-        
-        print(f"Selected {self.foliage_colour_name} leaves with colour {self.foliage_colour}")
     
     
     def _generate_tree_name(self) -> str:
