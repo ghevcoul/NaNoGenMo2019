@@ -1,8 +1,10 @@
 
 import math
+import random
 
 import svgwrite
 
+import colours
 from fractal_tree import FractalTree
 
 
@@ -12,11 +14,16 @@ class EntryWriter:
     """
     def __init__(self):
         self.tree: FractalTree = FractalTree()
+        self.bark_colour = None
+        self.bark_colour_name: str = None
+        self.foliage_colour = None
+        self.foliage_colour_name: str = None
 
-        self.trunk_color = svgwrite.rgb(139, 69, 19)
-        self.foliage_color = svgwrite.rgb(34, 139, 34)
+        self._select_bark_colour()
+        self._select_foliage_colour()
 
-        self.foliage_length = 6
+        self.foliage_length = random.randint(5, 25)
+
 
     def generate_svg(self):
         """
@@ -35,9 +42,9 @@ class EntryWriter:
                 width = 1
 
             if branch.length() >= self.foliage_length:
-                color = self.trunk_color
+                color = self.bark_colour
             else:
-                color = self.foliage_color
+                color = self.foliage_colour
 
             self.svg_img.add(self.svg_img.line(
                 start=(branch.start.x, branch.start.y),
@@ -46,6 +53,7 @@ class EntryWriter:
                 stroke_width=width,
                 stroke_linecap="round"
             ))
+
 
     def write_file(self, filename):
         """
@@ -56,11 +64,53 @@ class EntryWriter:
 
         self.svg_img.saveas(filename, pretty=True, indent=2)
 
+
     def get_svg_string(self) -> str:
         """
         Returns the SVG image as a string.
         """
         return self.svg_img.tostring()
+
+
+    def _select_bark_colour(self) -> None:
+        """
+        Chooses the colour of the trunk of the tree. Saves the colour to the class as an RGB and a string naming the colour.
+
+        70% chance of choosing a brown trunk, 30% chance of choosing a gray/silver
+        """
+        colour_selector = random.random()
+        if colour_selector <= 0.70:
+            colour = random.choice(colours.BROWNS)
+            self.bark_colour = svgwrite.rgb(*colour)
+            self.bark_colour_name = "brown"
+        else:
+            colour = random.choice(colours.GRAYS)
+            self.bark_colour = svgwrite.rgb(*colour)
+            self.bark_colour_name = random.choice(["silver", "gray", "grey"])
+        
+        print(f"Selected {self.bark_colour_name} bark with colour {colour}")
+    
+    def _select_foliage_colour(self) -> None:
+        """
+        Chooses the colour of the foliage for the tree. Saves the colour to the class as an RGB and a string naming the colour.
+
+        80% chance of choosing green leaves, 10% chance each of choosing ornamental or flowering
+        """
+        colour_selector = random.random()
+        if colour_selector <= 0.80:
+            colour = random.choice(colours.GREENS)
+            self.foliage_colour = svgwrite.rgb(*colour)
+            self.foliage_colour_name = "green"
+        elif 0.80 < colour_selector <= 0.90:
+            colour = random.choice(colours.ORNAMENTAL)
+            self.foliage_colour = svgwrite.rgb(*colour)
+            self.foliage_colour_name = "ornamental"
+        else:
+            colour = random.choice(colours.FLOWERING)
+            self.foliage_colour = svgwrite.rgb(*colour)
+            self.foliage_colour_name = "flowering"
+        
+        print(f"Selected {self.foliage_colour_name} leaves with colour {colour}")
 
 
 if __name__ == "__main__":

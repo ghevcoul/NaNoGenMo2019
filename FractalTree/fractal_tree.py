@@ -39,8 +39,6 @@ class FractalTree:
     A class for building randomized fractal trees.
     """
     def __init__(self):
-        random.seed(36797)
-
         self.trunk_length: int = 150
         self.start_angle: int = 270
         self.start_pos: Point = Point(0, 0)

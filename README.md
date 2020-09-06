@@ -1,5 +1,4 @@
-# [NaNoGenMo2019](https://github.com/NaNoGenMo/2019)
-## A Field Guide of Exotic Trees
+# A Field Guide of Exotic Trees
 
 A Python 3.7 app that generates random fractal-like trees and field guide entries for those trees. 
 
