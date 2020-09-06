@@ -1,3 +1,6 @@
+"""
+Lists of colours for use in generating bark and foliage.
+"""
 
 BROWNS = [
     (139, 69, 19),

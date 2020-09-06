@@ -51,7 +51,7 @@ class FractalTree:
         # What angle (in degrees) will the next branch have
         self.angle: Tuple[int, int] = (-65, 65)
         # How many branches will come off this branch
-        self.branches: List[int] = [2, 2, 2, 3, 3, 3, 4, 4, 5]
+        self.branches: List[int] = [2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6]
 
         self.tree: List[LineSegment] = []
 
