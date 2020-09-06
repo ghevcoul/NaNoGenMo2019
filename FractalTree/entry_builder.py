@@ -47,6 +47,10 @@ class EntryWriter:
             fname = self.filename + ".svg"
             writer = image_writer.SVGWriter(self.tree, fname, self.bark_colour, self.foliage_colour, self.foliage_length)
             writer.write()
+        elif format == "PNG":
+            fname = self.filename + ".png"
+            writer = image_writer.PNGWriter(self.tree, fname, self.bark_colour, self.foliage_colour, self.foliage_length)
+            writer.write()
         else:
             raise NotImplementedError(f"Unknown format {format}")
 
@@ -146,4 +150,4 @@ class EntryWriter:
 if __name__ == "__main__":
     entry = EntryWriter()
     entry.build_tree()
-    entry.write_image("SVG")
+    entry.write_image("PNG")

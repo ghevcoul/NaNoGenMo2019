@@ -3,6 +3,7 @@ import math
 import random
 
 import svgwrite
+from PIL import Image, ImageDraw
 
 from fractal_tree import FractalTree
 
@@ -67,3 +68,48 @@ class SVGWriter:
         if not self.svg_img:
             self.generate_svg()
         return self.svg_img.tostring()
+
+
+class PNGWriter:
+
+    def __init__(self, 
+        _tree: FractalTree, 
+        _filename: str,
+        _bark: Tuple[int, int, int], 
+        _foliage: Tuple[int, int, int],
+        _foliage_length: int):
+
+        self.tree = _tree
+        self.filename = _filename
+        self.bark_colour = _bark
+        self.foliage_colour = _foliage
+        self.foliage_length = _foliage_length
+
+        self.im: Image = None
+
+    
+    def generate_image(self) -> None:
+        draw = ImageDraw.Draw(self.im)
+
+        # Add each branch to the drawing
+        for branch in self.tree.tree:
+            width = math.floor(branch.length() / random.randint(6, 9))
+            if width < 1:
+                width = 1
+
+            if branch.length() >= self.foliage_length:
+                color = self.bark_colour
+            else:
+                color = self.foliage_colour
+            
+            draw.line(
+                [(branch.start.x, branch.start.y), (branch.end.x, branch.end.y)],
+                fill=color,
+                width=width
+            )
+    
+
+    def write(self) -> None:
+        self.im = Image.new("RGB", size=self.tree.get_max_vals(), color="white")
+        self.generate_image()
+        self.im.save(self.filename, format="PNG", optimize=True)
