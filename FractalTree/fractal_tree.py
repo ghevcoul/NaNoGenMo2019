@@ -3,8 +3,6 @@ A recursive fractal tree builder.
 """
 import math
 import random
-import time
-from multiprocessing import Queue, JoinableQueue, Process
 from dataclasses import dataclass
 
 from typing import List, Tuple
@@ -124,60 +122,6 @@ class FractalTree:
         )
         return LineSegment(start, end_point)
 
-
-# def worker(work_q, res_q):
-#
-#     while not work_q.empty():
-#         task = work_q.get()
-#         start, length, angle = task
-#         if length > 3:
-#             # Generate this branch
-#             branch = make_branch(start, length, angle)
-#             res_q.put(branch)
-#             # Put the next branches on the work queue
-#             next_pt = branch[2:]
-#             for _ in range(random.choice(PARAMS["branches"])):
-#                 work_q.put(
-#                     (
-#                         next_pt,
-#                         length * random.uniform(PARAMS["length"][0], PARAMS["length"][1]),
-#                         angle + random.randrange(PARAMS["angle"][0], PARAMS["angle"][1])
-#                     )
-#                 )
-#         work_q.task_done()
-#
-# def build_tree_parallel(start=(0, 0), branch_len=150, angle=270):
-#
-#     # Make a work queue and result queue
-#     work_queue = JoinableQueue()
-#     result_queue = Queue()
-#
-#     # Put the first task in the work queue
-#     work_queue.put([start, branch_len, angle])
-#
-#     # print(work_queue.get())
-#     # sys.exit()
-#
-#     # Start a bunch of workers
-#     workers = 2
-#     processes = []
-#     for _ in range(workers):
-#         p = Process(target=worker, args=(work_queue, result_queue))
-#         p.start()
-#         processes.append(p)
-#         time.sleep(0.25)
-#     work_queue.join()
-#     # for p in processes:
-#     #     p.join()
-#     work_queue.close()
-#
-#     # Collect the results...
-#     tree = []
-#     while not result_queue.empty():
-#         tree.append(result_queue.get())
-#     result_queue.close()
-#     print(len(tree))
-#     return tree
 
 
 if __name__ == "__main__":
