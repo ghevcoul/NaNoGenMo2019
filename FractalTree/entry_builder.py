@@ -6,18 +6,21 @@ import svgwrite
 
 import colours
 import names
+import image_writer
 from fractal_tree import FractalTree
+
+from typing import Tuple
 
 
 class EntryWriter:
     """
     Generate and write an entry into the field guide.
     """
-    def __init__(self):
+    def __init__(self, directory: str=""):
         self.tree: FractalTree = FractalTree()
-        self.bark_colour = None
+        self.bark_colour: Tuple[int, int, int] = None
         self.bark_colour_name: str = None
-        self.foliage_colour = None
+        self.foliage_colour: Tuple[int, int, int] = None
         self.foliage_colour_name: str = None
 
         self._select_bark_colour()
@@ -25,57 +28,27 @@ class EntryWriter:
 
         self.foliage_length = random.randint(5, 25)
         self.tree_name = self._generate_tree_name()
-        self.filename = self.tree_name.lower().replace(" ", "-") + ".svg"
 
-
-    def generate_svg(self):
-        """
-        Generates an SVG image from the list of line segments defining a FractalTree
-        """
-        # First build the tree
-        self.tree.generate()
-        self.tree.normalize()
-
-        self.svg_img = svgwrite.Drawing(size=self.tree.get_max_vals())
-
-        # Add each branch to the drawing
-        for branch in self.tree.tree:
-            width = math.floor(branch.length() / random.randint(6, 9))
-            if width < 1:
-                width = 1
-
-            if branch.length() >= self.foliage_length:
-                color = self.bark_colour
-            else:
-                color = self.foliage_colour
-
-            self.svg_img.add(self.svg_img.line(
-                start=(branch.start.x, branch.start.y),
-                end=(branch.end.x, branch.end.y),
-                stroke=color,
-                stroke_width=width,
-                stroke_linecap="round"
-            ))
-
-
-    def write_file(self, directory=""):
-        """
-        Write SVG to filename.
-        """
         if directory:
             if directory[-1] != "/":
                 directory += "/"
-        
-        full_path = directory + self.filename
+        self.filename = directory + self.tree_name.lower().replace(" ", "-")
+    
 
-        self.svg_img.saveas(full_path, pretty=True, indent=2)
+    def build_tree(self) -> None:
+        print(f"Creating tree {self.tree_name}")
+        self.tree.generate()
+        self.tree.normalize()
 
 
-    def get_svg_string(self) -> str:
-        """
-        Returns the SVG image as a string.
-        """
-        return self.svg_img.tostring()
+    def write_image(self, format: str) -> None:
+        print(f"Writing {format} image of tree")
+        if format == "SVG":
+            fname = self.filename + ".svg"
+            writer = image_writer.SVGWriter(self.tree, fname, self.bark_colour, self.foliage_colour, self.foliage_length)
+            writer.write()
+        else:
+            raise NotImplementedError(f"Unknown format {format}")
 
 
     def _select_bark_colour(self) -> None:
@@ -86,15 +59,13 @@ class EntryWriter:
         """
         colour_selector = random.random()
         if colour_selector <= 0.70:
-            colour = random.choice(colours.BROWNS)
-            self.bark_colour = svgwrite.rgb(*colour)
+            self.bark_colour = random.choice(colours.BROWNS)
             self.bark_colour_name = "Brown"
         else:
-            colour = random.choice(colours.GRAYS)
-            self.bark_colour = svgwrite.rgb(*colour)
+            self.bark_colour = random.choice(colours.GRAYS)
             self.bark_colour_name = random.choice(["Silver", "Gray", "Grey"])
         
-        print(f"Selected {self.bark_colour_name} bark with colour {colour}")
+        print(f"Selected {self.bark_colour_name} bark with colour {self.bark_colour}")
     
 
     def _select_foliage_colour(self) -> None:
@@ -105,19 +76,16 @@ class EntryWriter:
         """
         colour_selector = random.random()
         if colour_selector <= 0.80:
-            colour = random.choice(colours.GREENS)
-            self.foliage_colour = svgwrite.rgb(*colour)
+            self.foliage_colour = random.choice(colours.GREENS)
             self.foliage_colour_name = "Green"
         elif 0.80 < colour_selector <= 0.90:
-            colour = random.choice(colours.ORNAMENTAL)
-            self.foliage_colour = svgwrite.rgb(*colour)
+            self.foliage_colour = random.choice(colours.ORNAMENTAL)
             self.foliage_colour_name = "Ornamental"
         else:
-            colour = random.choice(colours.FLOWERING)
-            self.foliage_colour = svgwrite.rgb(*colour)
+            self.foliage_colour = random.choice(colours.FLOWERING)
             self.foliage_colour_name = "Flowering"
         
-        print(f"Selected {self.foliage_colour_name} leaves with colour {colour}")
+        print(f"Selected {self.foliage_colour_name} leaves with colour {self.foliage_colour}")
     
     
     def _generate_tree_name(self) -> str:
@@ -177,5 +145,5 @@ class EntryWriter:
 
 if __name__ == "__main__":
     entry = EntryWriter()
-    entry.generate_svg()
-    entry.write_file()
+    entry.build_tree()
+    entry.write_image("SVG")
