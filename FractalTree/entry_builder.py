@@ -25,8 +25,6 @@ class EntryWriter:
 
         self._select_bark_colour()
         self._select_foliage_colour()
-
-        self.foliage_length = random.randint(5, 25)
         self.tree_name = self._generate_tree_name()
 
         if directory:
@@ -45,11 +43,11 @@ class EntryWriter:
         print(f"Writing {format} image of tree")
         if format == "SVG":
             fname = self.filename + ".svg"
-            writer = image_writer.SVGWriter(self.tree, fname, self.bark_colour, self.foliage_colour, self.foliage_length)
+            writer = image_writer.SVGWriter(self.tree, fname, self.bark_colour, self.foliage_colour)
             writer.write()
         elif format == "PNG":
             fname = self.filename + ".png"
-            writer = image_writer.PNGWriter(self.tree, fname, self.bark_colour, self.foliage_colour, self.foliage_length)
+            writer = image_writer.PNGWriter(self.tree, fname, self.bark_colour, self.foliage_colour)
             writer.write()
         else:
             raise NotImplementedError(f"Unknown format {format}")

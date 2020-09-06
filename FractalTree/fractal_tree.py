@@ -32,6 +32,14 @@ class LineSegment:
         return math.sqrt((self.end.x - self.start.x) ** 2 + (self.end.y - self.start.y) ** 2)
 
 
+@dataclass
+class Branch:
+
+    line: LineSegment
+    width: int
+    leaf: bool
+
+
 class FractalTree:
     """
     A class for building randomized fractal trees.
@@ -50,8 +58,11 @@ class FractalTree:
         self.angle: Tuple[int, int] = (-65, 65)
         # How many branches will come off this branch
         self.branches: List[int] = [2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6]
+        # How short does a branch have to be to be considered a leaf
+        self.leaf_length = random.randint(5, 25)
 
-        self.tree: List[LineSegment] = []
+        self.tree: List[Branch] = []
+
 
     def generate(self):
         """
@@ -60,41 +71,41 @@ class FractalTree:
         """
         self._build_tree(self.start_pos, self.trunk_length, self.start_angle)
 
-    def get_max_vals(self) -> Tuple[float, float]:
+
+    def get_max_vals(self) -> Tuple[int, int]:
         """
         Finds the max x and y values in the given tree and returns them.
         """
-        x_vals = [(line.start.x, line.end.x) for line in self.tree]
+        x_vals = [(branch.line.start.x, branch.line.end.x) for branch in self.tree]
         x_vals = [item for sublist in x_vals for item in sublist]
-        y_vals = [(line.start.y, line.end.y) for line in self.tree]
+        y_vals = [(branch.line.start.y, branch.line.end.y) for branch in self.tree]
         y_vals = [item for sublist in y_vals for item in sublist]
 
-        return math.ceil(max(x_vals)), math.ceil(max(y_vals))
+        return int(math.ceil(max(x_vals))), int(math.ceil(max(y_vals)))
+
 
     def normalize(self):
         """
         Normalizes the tree by making all coordinates positive.
         """
         # Find the minimum x and y values
-        x_vals = [(line.start.x, line.end.x) for line in self.tree]
+        x_vals = [(branch.line.start.x, branch.line.end.x) for branch in self.tree]
         x_vals = [item for sublist in x_vals for item in sublist]
-        y_vals = [(line.start.y, line.end.y) for line in self.tree]
+        y_vals = [(branch.line.start.y, branch.line.end.y) for branch in self.tree]
         y_vals = [item for sublist in y_vals for item in sublist]
         x_shift = abs(min(x_vals))
         y_shift = abs(min(y_vals))
 
         # Add the shift values to each point
-        new_tree = []
-        for line in self.tree:
+        for branch in self.tree:
             new_segment = LineSegment(
-                Point(line.start.x + x_shift, line.start.y + y_shift),
-                Point(line.end.x + x_shift, line.end.y + y_shift)
+                Point(branch.line.start.x + x_shift, branch.line.start.y + y_shift),
+                Point(branch.line.end.x + x_shift, branch.line.end.y + y_shift)
             )
-            new_tree.append(new_segment)
+            branch.line = new_segment
 
-        self.tree = new_tree
 
-    def _build_tree(self, start: Point, branch_len: float, branch_angle: float):
+    def _build_tree(self, start: Point, branch_len: float, branch_angle: float) -> None:
         """
         Recursively build the tree, exiting when the branch length is 3 or less.
         """
@@ -104,13 +115,13 @@ class FractalTree:
 
             for _ in range(random.choice(self.branches)):
                 self._build_tree(
-                    branch.end,
+                    branch.line.end,
                     branch_len * random.uniform(self.length[0], self.length[1]),
                     branch_angle + random.randrange(self.angle[0], self.angle[1])
                 )
 
-    @staticmethod
-    def _make_branch(start: Point, branch_length: float, branch_angle: float) -> LineSegment:
+
+    def _make_branch(self, start: Point, branch_length: float, branch_angle: float) -> Branch:
         """
         Gets the xy coordinates for the end of a branch with the input starting coordinates
         with branch length and angle.
@@ -120,7 +131,15 @@ class FractalTree:
             start.x + (branch_length * math.cos(math.radians(branch_angle))),
             start.y + (branch_length * math.sin(math.radians(branch_angle)))
         )
-        return LineSegment(start, end_point)
+        segment = LineSegment(start, end_point)
+
+        width = math.floor(segment.length() / random.randint(6, 9))
+        if width < 1:
+            width = 1
+        
+        leaf = segment.length() <= self.leaf_length
+
+        return Branch(segment, width, leaf)
 
 
 

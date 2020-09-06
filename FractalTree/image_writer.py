@@ -15,14 +15,12 @@ class SVGWriter:
         _tree: FractalTree, 
         _filename: str,
         _bark: Tuple[int, int, int], 
-        _foliage: Tuple[int, int, int],
-        _foliage_length: int):
+        _foliage: Tuple[int, int, int]):
         
         self.tree = _tree
         self.filename = _filename
         self.bark_colour = svgwrite.rgb(*_bark)
         self.foliage_colour = svgwrite.rgb(*_foliage)
-        self.foliage_length = _foliage_length
 
         self.svg_img = None
 
@@ -34,20 +32,16 @@ class SVGWriter:
 
         # Add each branch to the drawing
         for branch in self.tree.tree:
-            width = math.floor(branch.length() / random.randint(6, 9))
-            if width < 1:
-                width = 1
-
-            if branch.length() >= self.foliage_length:
-                color = self.bark_colour
-            else:
+            if branch.leaf:
                 color = self.foliage_colour
+            else:
+                color = self.bark_colour
 
             self.svg_img.add(self.svg_img.line(
-                start=(branch.start.x, branch.start.y),
-                end=(branch.end.x, branch.end.y),
+                start=(branch.line.start.x, branch.line.start.y),
+                end=(branch.line.end.x, branch.line.end.y),
                 stroke=color,
-                stroke_width=width,
+                stroke_width=branch.width,
                 stroke_linecap="round"
             ))
 
@@ -76,14 +70,12 @@ class PNGWriter:
         _tree: FractalTree, 
         _filename: str,
         _bark: Tuple[int, int, int], 
-        _foliage: Tuple[int, int, int],
-        _foliage_length: int):
+        _foliage: Tuple[int, int, int]):
 
         self.tree = _tree
         self.filename = _filename
         self.bark_colour = _bark
         self.foliage_colour = _foliage
-        self.foliage_length = _foliage_length
 
         self.im: Image = None
 
@@ -93,19 +85,15 @@ class PNGWriter:
 
         # Add each branch to the drawing
         for branch in self.tree.tree:
-            width = math.floor(branch.length() / random.randint(6, 9))
-            if width < 1:
-                width = 1
-
-            if branch.length() >= self.foliage_length:
-                color = self.bark_colour
-            else:
+            if branch.leaf:
                 color = self.foliage_colour
+            else:
+                color = self.bark_colour
             
             draw.line(
-                [(branch.start.x, branch.start.y), (branch.end.x, branch.end.y)],
+                [(branch.line.start.x, branch.line.start.y), (branch.line.end.x, branch.line.end.y)],
                 fill=color,
-                width=width
+                width=branch.width
             )
     
 
