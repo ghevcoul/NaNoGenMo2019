@@ -45,21 +45,9 @@ class FractalTree:
     A class for building randomized fractal trees.
     """
     def __init__(self):
-        self.trunk_length: int = 150
+        self.trunk_length: int = 100
         self.start_angle: int = 270
         self.start_pos: Point = Point(0, 0)
-
-        # Will the tree be symmetrical? 65% chance of asymmetry
-        #TODO: Implement symmetrical trees
-        self.symmetrical: bool = random.random() > 0.65
-        # What fraction will the length of the next branch be reduced
-        self.length: Tuple[float, float] = (0.45, 0.85)
-        # What angle (in degrees) will the next branch have
-        self.angle: Tuple[int, int] = (-65, 65)
-        # How many branches will come off this branch
-        self.branches: List[int] = [2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6]
-        # How short does a branch have to be to be considered a leaf
-        self.leaf_length = random.randint(5, 25)
 
         self.tree: List[Branch] = []
 
@@ -70,6 +58,13 @@ class FractalTree:
         Calls a recursive function that actually does the tree building with the starting values
         """
         self._build_tree(self.start_pos, self.trunk_length, self.start_angle)
+
+
+    def _build_tree(self, start: Point, branch_len: float, branch_angle: float) -> None:
+        """
+        Empty base function to be overridden in extending classes
+        """
+        pass
 
 
     def get_max_vals(self) -> Tuple[int, int]:
@@ -103,6 +98,26 @@ class FractalTree:
                 Point(branch.line.end.x + x_shift, branch.line.end.y + y_shift)
             )
             branch.line = new_segment
+
+
+class DeciduousTree(FractalTree):
+
+    def __init__(self):
+        super().__init__()
+
+        self.trunk_length: int = 150
+
+        # Will the tree be symmetrical? 65% chance of asymmetry
+        #TODO: Implement symmetrical trees
+        self.symmetrical: bool = random.random() > 0.65
+        # What fraction will the length of the next branch be reduced
+        self.length: Tuple[float, float] = (0.45, 0.85)
+        # What angle (in degrees) will the next branch have
+        self.angle: Tuple[int, int] = (-65, 65)
+        # How many branches will come off this branch
+        self.branches: List[int] = [2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6]
+        # How short does a branch have to be to be considered a leaf
+        self.leaf_length = random.randint(5, 25)
 
 
     def _build_tree(self, start: Point, branch_len: float, branch_angle: float) -> None:
@@ -140,7 +155,6 @@ class FractalTree:
         leaf = segment.length() <= self.leaf_length
 
         return Branch(segment, width, leaf)
-
 
 
 if __name__ == "__main__":

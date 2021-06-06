@@ -4,10 +4,10 @@ import random
 
 import svgwrite
 
-import colours
-import names
-import image_writer
-from fractal_tree import FractalTree
+from . import colours
+from . import names
+from . import image_writer
+from .fractal_tree import FractalTree
 
 from typing import Tuple
 
@@ -143,6 +143,6 @@ class EntryWriter:
 
 if __name__ == "__main__":
     for _ in range(25):
-        entry = EntryWriter("examples/")
+        entry = EntryWriter("pics/")
         entry.build_tree()
         entry.write_image("PNG")
