@@ -1,15 +1,14 @@
 
 import math
 import random
+from typing import Tuple
 
 import svgwrite
 
-from . import colours
-from . import names
-from . import image_writer
-from .fractal_tree import FractalTree
-
-from typing import Tuple
+import colours
+import names
+import image_writer
+from fractal_tree import ConiferousTree, DeciduousTree, FractalTree
 
 
 class EntryWriter:
@@ -17,7 +16,7 @@ class EntryWriter:
     Generate and write an entry into the field guide.
     """
     def __init__(self, directory: str=""):
-        self.tree: FractalTree = FractalTree()
+        self.tree: FractalTree = DeciduousTree()
         self.bark_colour: Tuple[int, int, int] = None
         self.bark_colour_name: str = None
         self.foliage_colour: Tuple[int, int, int] = None
@@ -106,7 +105,6 @@ class EntryWriter:
         """
         tree_name = []
 
-        num_modifiers = 0
         mod_selector = random.random()
         if mod_selector <= 0.60:  # 1 modifier
             if self.foliage_colour_name != "Green" and random.random() > 0.7:
@@ -142,7 +140,8 @@ class EntryWriter:
 
 
 if __name__ == "__main__":
+    random.seed(98765)
     for _ in range(25):
-        entry = EntryWriter("pics/")
+        entry = EntryWriter("test/")
         entry.build_tree()
         entry.write_image("PNG")

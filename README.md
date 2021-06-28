@@ -1,6 +1,6 @@
 # A Field Guide of Exotic Trees
 
-A Python 3.7 app that generates random fractal-like trees and field guide entries for those trees. 
+A Python 3 app that generates random fractal-like trees and field guide entries for those trees. 
 
 ### To-do:
 - [ ] Write field guide entries

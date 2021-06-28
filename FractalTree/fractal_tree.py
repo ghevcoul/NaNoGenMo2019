@@ -157,6 +157,76 @@ class DeciduousTree(FractalTree):
         return Branch(segment, width, leaf)
 
 
+# This doesn't work, it makes a giant mess...
+# Need to revisit the idea, maybe return to L-systems as inspiration
+class ConiferousTree(FractalTree):
+
+    def __init__(self):
+        super().__init__()
+
+        self.trunk_length: int = 100
+        self.start_angle: int = 270
+
+        # What fraction will the length of the next branch be reduced
+        self.lengths: Tuple[Tuple[float, float]] = (
+            # left
+            (0.7, 0.9),
+            # right
+            (0.7, 0.9),
+            # trunk
+            (0.45, 0.65)
+        )
+        # What angle (in degrees) will the next branch have
+        self.angles: Tuple[Tuple[int, int]] = (
+            # left
+            (-100, -80),
+            # right
+            (80, 100),
+            # trunk
+            (-10, 10)
+        )
+
+        # How short does a branch have to be to be considered a leaf
+        self.leaf_length = random.randint(4, 8)
+    
+
+    def _build_tree(self, start: Point, branch_len: float, branch_angle: float) -> None:
+        """
+        Recursively build the tree, exiting when the branch length is 1 or less.
+        """
+        if branch_len > 3:
+            branch = self._make_branch(start, branch_len, branch_angle)
+            self.tree.append(branch)
+
+            for length, direction in zip(self.lengths, self.angles):
+                self._build_tree(
+                    branch.line.end,
+                    branch_len * random.uniform(length[0], length[1]),
+                    branch_angle + random.randrange(direction[0], direction[1])
+                )
+
+
+    def _make_branch(self, start: Point, branch_length: float, branch_angle: float) -> Branch:
+        """
+        Gets the xy coordinates for the end of a branch with the input starting coordinates
+        with branch length and angle.
+        Returns a LineSegment
+        """
+        end_point = Point(
+            start.x + (branch_length * math.cos(math.radians(branch_angle))),
+            start.y + (branch_length * math.sin(math.radians(branch_angle)))
+        )
+        segment = LineSegment(start, end_point)
+
+        width = math.floor(segment.length() / random.randint(6, 9))
+        if width < 1:
+            width = 1
+        
+        leaf = segment.length() <= self.leaf_length
+
+        return Branch(segment, width, leaf)
+
+
 if __name__ == "__main__":
     # random.seed(1234)
     TREE = FractalTree()
