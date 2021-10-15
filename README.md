@@ -2,6 +2,8 @@
 
 A Python 3 app that generates random fractal-like trees and field guide entries for those trees. 
 
+A more complete write-up of this project and its history is available [here](https://www.quantumgeranium.com/projects/field-guide-to-exotic-trees).
+
 ### To-do:
 - [ ] Write field guide entries
 - [ ] Tree generation
