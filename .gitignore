@@ -1,6 +1,11 @@
 # Project-specific files
 pics/
 
+# Typescript files
+node_modules/
+typscript/dist/*.js
+!typscript/dist/index.html
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
